@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Extension card colors
+				"extension-green": "#2e7d32",
+				"extension-blue": "#1565c0",
+				"extension-purple": "#6a1b9a",
+				"extension-pink": "#ad1457",
+				"extension-teal": "#00695c",
+				"extension-orange": "#e65100",
+				"extension-red": "#c62828",
+			},
+			backgroundColor: {
+				"dark-card": "#1a1f2c",
+				"darker": "#0f1118",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
