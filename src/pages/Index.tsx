@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Code, 
@@ -22,13 +23,15 @@ import {
   Shield,
   Cpu,
   Download,
-  Clock
+  Clock,
+  ExternalLink
 } from "lucide-react";
 import { Extension } from "@/types/extension";
 import ExtensionsList from "@/components/ExtensionsList";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "@/providers/ThemeProvider";
 import RemovedExtensionsList from "@/components/RemovedExtensionsList";
+import ExtensionIcon from "@/components/ExtensionIcon";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
