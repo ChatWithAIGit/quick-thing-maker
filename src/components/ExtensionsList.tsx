@@ -13,6 +13,7 @@ interface ExtensionsListProps {
   onToggle: (id: string, active: boolean) => void;
   onRemove: (id: string) => void;
   onShowDetails?: (id: string) => void;
+  onEdit?: (id: string) => void;
 }
 
 type FilterType = "all" | "active" | "inactive";
@@ -22,7 +23,8 @@ const ExtensionsList = ({
   extensions, 
   onToggle, 
   onRemove,
-  onShowDetails
+  onShowDetails,
+  onEdit
 }: ExtensionsListProps) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -118,6 +120,7 @@ const ExtensionsList = ({
               onToggle={(active) => onToggle(extension.id, active)}
               onRemove={() => onRemove(extension.id)}
               showDetails={onShowDetails ? () => onShowDetails(extension.id) : undefined}
+              onEdit={onEdit ? () => onEdit(extension.id) : undefined}
             />
           ))
         ) : (

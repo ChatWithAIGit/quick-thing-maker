@@ -17,4 +17,5 @@ export interface Extension {
   permissions?: string[];
   size?: string;
   rating?: number;
+  updatedAt?: string; // New field to track when an extension was last updated
 }

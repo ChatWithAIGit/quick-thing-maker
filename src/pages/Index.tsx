@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Code, 
   Palette, 
@@ -24,7 +23,8 @@ import {
   Cpu,
   Download,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Pencil
 } from "lucide-react";
 import { Extension } from "@/types/extension";
 import ExtensionsList from "@/components/ExtensionsList";
@@ -37,219 +37,240 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown } from "lucide-react";
+
+const defaultExtensions: Extension[] = [
+  {
+    id: "1",
+    name: "DevLens",
+    description: "Quickly inspect page layouts and visualize element boundaries.",
+    icon: Layout,
+    iconColor: "#388e3c",
+    isActive: true,
+    category: "Development",
+    version: "1.2.0",
+    lastUpdated: "2 weeks ago",
+    author: "DevTools Inc.",
+    website: "https://example.com/devlens",
+    permissions: ["activeTab", "storage"],
+    tags: ["inspection", "layout"],
+    size: "1.2MB",
+    rating: 4.7
+  },
+  {
+    id: "2",
+    name: "StyleSpy",
+    description: "Instantly analyze and copy CSS from any webpage element.",
+    icon: Code,
+    iconColor: "#1976d2",
+    isActive: true,
+    category: "Design",
+    version: "2.0.3",
+    lastUpdated: "3 days ago",
+    author: "Web Design Tools",
+    website: "https://example.com/stylespy",
+    permissions: ["activeTab", "clipboard"],
+    tags: ["css", "design"],
+    size: "0.8MB",
+    rating: 4.9
+  },
+  {
+    id: "3",
+    name: "SpeedBoost",
+    description: "Optimizes browser resource usage to accelerate page loading.",
+    icon: Zap,
+    iconColor: "#ff9800",
+    isActive: false,
+    category: "Performance",
+    version: "3.1.5",
+    lastUpdated: "1 month ago",
+    author: "Performance Labs",
+    website: "https://example.com/speedboost",
+    permissions: ["webRequest", "webRequestBlocking"],
+    tags: ["performance", "optimization"],
+    size: "2.4MB",
+    rating: 4.2
+  },
+  {
+    id: "4",
+    name: "JSONWizard",
+    description: "Formats, validates, and prettifies JSON responses in-browser.",
+    icon: Braces,
+    iconColor: "#e91e63",
+    isActive: true,
+    category: "Development",
+    version: "1.1.2",
+    lastUpdated: "1 week ago",
+    author: "JSON Tools",
+    website: "https://example.com/jsonwizard",
+    permissions: ["activeTab", "storage"],
+    tags: ["json", "formatting"],
+    size: "0.5MB",
+    rating: 4.6
+  },
+  {
+    id: "5",
+    name: "TabMaster Pro",
+    description: "Organizes browser tabs into groups and sessions.",
+    icon: Layers,
+    iconColor: "#9c27b0",
+    isActive: true,
+    category: "Productivity",
+    version: "2.3.1",
+    lastUpdated: "2 months ago",
+    author: "Tab Management",
+    website: "https://example.com/tabmasterpro",
+    permissions: ["activeTab", "storage"],
+    tags: ["tabs", "organization"],
+    size: "0.7MB",
+    rating: 4.5
+  },
+  {
+    id: "6",
+    name: "ViewportBuddy",
+    description: "Simulates various screen resolutions directly within the browser.",
+    icon: Smartphone,
+    iconColor: "#29b6f6",
+    isActive: false,
+    category: "Development",
+    version: "1.0.4",
+    lastUpdated: "1 month ago",
+    author: "Viewport Tools",
+    website: "https://example.com/viewportbuddy",
+    permissions: ["activeTab", "storage"],
+    tags: ["viewport", "simulator"],
+    size: "0.3MB",
+    rating: 4.3
+  },
+  {
+    id: "7",
+    name: "Markup Notes",
+    description: "Enables annotation and notes directly onto webpages for collaborative debugging.",
+    icon: FileEdit,
+    iconColor: "#5e35b1",
+    isActive: true,
+    category: "Development",
+    version: "1.2.1",
+    lastUpdated: "2 weeks ago",
+    author: "Markup Tools",
+    website: "https://example.com/markupnotes",
+    permissions: ["activeTab", "storage"],
+    tags: ["annotation", "notes"],
+    size: "0.6MB",
+    rating: 4.8
+  },
+  {
+    id: "8",
+    name: "GridGuides",
+    description: "Overlay customizable grids and alignment guides on any webpage.",
+    icon: Grid,
+    iconColor: "#3949ab",
+    isActive: false,
+    category: "Design",
+    version: "1.1.0",
+    lastUpdated: "1 week ago",
+    author: "Grid Tools",
+    website: "https://example.com/gridguides",
+    permissions: ["activeTab", "storage"],
+    tags: ["grid", "alignment"],
+    size: "0.4MB",
+    rating: 4.4
+  },
+  {
+    id: "9",
+    name: "Palette Picker",
+    description: "Instantly extracts color palettes from any webpage.",
+    icon: Palette,
+    iconColor: "#43a047",
+    isActive: true,
+    category: "Design",
+    version: "1.0.5",
+    lastUpdated: "2 weeks ago",
+    author: "Palette Tools",
+    website: "https://example.com/palettepicker",
+    permissions: ["activeTab", "storage"],
+    tags: ["color", "palette"],
+    size: "0.2MB",
+    rating: 4.7
+  },
+  {
+    id: "10",
+    name: "LinkChecker",
+    description: "Scans and highlights broken links on any page.",
+    icon: Link2,
+    iconColor: "#ff7043",
+    isActive: true,
+    category: "Development",
+    version: "1.1.3",
+    lastUpdated: "1 month ago",
+    author: "Link Tools",
+    website: "https://example.com/linkchecker",
+    permissions: ["activeTab", "storage"],
+    tags: ["link", "check"],
+    size: "0.3MB",
+    rating: 4.6
+  },
+  {
+    id: "11",
+    name: "DOM Snapshot",
+    description: "Capture and inspect DOM structures quickly.",
+    icon: FileCode,
+    iconColor: "#00acc1",
+    isActive: false,
+    category: "Development",
+    version: "1.0.2",
+    lastUpdated: "1 week ago",
+    author: "DOM Tools",
+    website: "https://example.com/domsnapshot",
+    permissions: ["activeTab", "storage"],
+    tags: ["dom", "snapshot"],
+    size: "0.1MB",
+    rating: 4.5
+  },
+  {
+    id: "12",
+    name: "ConsolePlus",
+    description: "Enhanced developer console with advanced filtering and logging.",
+    icon: Terminal,
+    iconColor: "#4caf50",
+    isActive: true,
+    category: "Development",
+    version: "1.1.1",
+    lastUpdated: "2 weeks ago",
+    author: "Console Tools",
+    website: "https://example.com/consoleplus",
+    permissions: ["activeTab", "storage"],
+    tags: ["console", "logging"],
+    size: "0.4MB",
+    rating: 4.7
+  },
+];
 
 const Index = () => {
   const { theme, toggleTheme } = useTheme();
   const [selectedExtension, setSelectedExtension] = useState<Extension | null>(null);
-  const [extensions, setExtensions] = useState<Extension[]>([
-    {
-      id: "1",
-      name: "DevLens",
-      description: "Quickly inspect page layouts and visualize element boundaries.",
-      icon: Layout,
-      iconColor: "#388e3c",
-      isActive: true,
-      category: "Development",
-      version: "1.2.0",
-      lastUpdated: "2 weeks ago",
-      author: "DevTools Inc.",
-      website: "https://example.com/devlens",
-      permissions: ["activeTab", "storage"],
-      tags: ["inspection", "layout"],
-      size: "1.2MB",
-      rating: 4.7
-    },
-    {
-      id: "2",
-      name: "StyleSpy",
-      description: "Instantly analyze and copy CSS from any webpage element.",
-      icon: Code,
-      iconColor: "#1976d2",
-      isActive: true,
-      category: "Design",
-      version: "2.0.3",
-      lastUpdated: "3 days ago",
-      author: "Web Design Tools",
-      website: "https://example.com/stylespy",
-      permissions: ["activeTab", "clipboard"],
-      tags: ["css", "design"],
-      size: "0.8MB",
-      rating: 4.9
-    },
-    {
-      id: "3",
-      name: "SpeedBoost",
-      description: "Optimizes browser resource usage to accelerate page loading.",
-      icon: Zap,
-      iconColor: "#ff9800",
-      isActive: false,
-      category: "Performance",
-      version: "3.1.5",
-      lastUpdated: "1 month ago",
-      author: "Performance Labs",
-      website: "https://example.com/speedboost",
-      permissions: ["webRequest", "webRequestBlocking"],
-      tags: ["performance", "optimization"],
-      size: "2.4MB",
-      rating: 4.2
-    },
-    {
-      id: "4",
-      name: "JSONWizard",
-      description: "Formats, validates, and prettifies JSON responses in-browser.",
-      icon: Braces,
-      iconColor: "#e91e63",
-      isActive: true,
-      category: "Development",
-      version: "1.1.2",
-      lastUpdated: "1 week ago",
-      author: "JSON Tools",
-      website: "https://example.com/jsonwizard",
-      permissions: ["activeTab", "storage"],
-      tags: ["json", "formatting"],
-      size: "0.5MB",
-      rating: 4.6
-    },
-    {
-      id: "5",
-      name: "TabMaster Pro",
-      description: "Organizes browser tabs into groups and sessions.",
-      icon: Layers,
-      iconColor: "#9c27b0",
-      isActive: true,
-      category: "Productivity",
-      version: "2.3.1",
-      lastUpdated: "2 months ago",
-      author: "Tab Management",
-      website: "https://example.com/tabmasterpro",
-      permissions: ["activeTab", "storage"],
-      tags: ["tabs", "organization"],
-      size: "0.7MB",
-      rating: 4.5
-    },
-    {
-      id: "6",
-      name: "ViewportBuddy",
-      description: "Simulates various screen resolutions directly within the browser.",
-      icon: Smartphone,
-      iconColor: "#29b6f6",
-      isActive: false,
-      category: "Development",
-      version: "1.0.4",
-      lastUpdated: "1 month ago",
-      author: "Viewport Tools",
-      website: "https://example.com/viewportbuddy",
-      permissions: ["activeTab", "storage"],
-      tags: ["viewport", "simulator"],
-      size: "0.3MB",
-      rating: 4.3
-    },
-    {
-      id: "7",
-      name: "Markup Notes",
-      description: "Enables annotation and notes directly onto webpages for collaborative debugging.",
-      icon: FileEdit,
-      iconColor: "#5e35b1",
-      isActive: true,
-      category: "Development",
-      version: "1.2.1",
-      lastUpdated: "2 weeks ago",
-      author: "Markup Tools",
-      website: "https://example.com/markupnotes",
-      permissions: ["activeTab", "storage"],
-      tags: ["annotation", "notes"],
-      size: "0.6MB",
-      rating: 4.8
-    },
-    {
-      id: "8",
-      name: "GridGuides",
-      description: "Overlay customizable grids and alignment guides on any webpage.",
-      icon: Grid,
-      iconColor: "#3949ab",
-      isActive: false,
-      category: "Design",
-      version: "1.1.0",
-      lastUpdated: "1 week ago",
-      author: "Grid Tools",
-      website: "https://example.com/gridguides",
-      permissions: ["activeTab", "storage"],
-      tags: ["grid", "alignment"],
-      size: "0.4MB",
-      rating: 4.4
-    },
-    {
-      id: "9",
-      name: "Palette Picker",
-      description: "Instantly extracts color palettes from any webpage.",
-      icon: Palette,
-      iconColor: "#43a047",
-      isActive: true,
-      category: "Design",
-      version: "1.0.5",
-      lastUpdated: "2 weeks ago",
-      author: "Palette Tools",
-      website: "https://example.com/palettepicker",
-      permissions: ["activeTab", "storage"],
-      tags: ["color", "palette"],
-      size: "0.2MB",
-      rating: 4.7
-    },
-    {
-      id: "10",
-      name: "LinkChecker",
-      description: "Scans and highlights broken links on any page.",
-      icon: Link2,
-      iconColor: "#ff7043",
-      isActive: true,
-      category: "Development",
-      version: "1.1.3",
-      lastUpdated: "1 month ago",
-      author: "Link Tools",
-      website: "https://example.com/linkchecker",
-      permissions: ["activeTab", "storage"],
-      tags: ["link", "check"],
-      size: "0.3MB",
-      rating: 4.6
-    },
-    {
-      id: "11",
-      name: "DOM Snapshot",
-      description: "Capture and inspect DOM structures quickly.",
-      icon: FileCode,
-      iconColor: "#00acc1",
-      isActive: false,
-      category: "Development",
-      version: "1.0.2",
-      lastUpdated: "1 week ago",
-      author: "DOM Tools",
-      website: "https://example.com/domsnapshot",
-      permissions: ["activeTab", "storage"],
-      tags: ["dom", "snapshot"],
-      size: "0.1MB",
-      rating: 4.5
-    },
-    {
-      id: "12",
-      name: "ConsolePlus",
-      description: "Enhanced developer console with advanced filtering and logging.",
-      icon: Terminal,
-      iconColor: "#4caf50",
-      isActive: true,
-      category: "Development",
-      version: "1.1.1",
-      lastUpdated: "2 weeks ago",
-      author: "Console Tools",
-      website: "https://example.com/consoleplus",
-      permissions: ["activeTab", "storage"],
-      tags: ["console", "logging"],
-      size: "0.4MB",
-      rating: 4.7
-    },
-  ]);
+  const [editingExtension, setEditingExtension] = useState<Extension | null>(null);
   
-  const [removedExtensions, setRemovedExtensions] = useState<Extension[]>([]);
+  const [extensions, setExtensions] = useState<Extension[]>(() => {
+    const savedExtensions = localStorage.getItem('extensions');
+    return savedExtensions ? JSON.parse(savedExtensions) : defaultExtensions;
+  });
+  
+  const [removedExtensions, setRemovedExtensions] = useState<Extension[]>(() => {
+    const savedRemovedExtensions = localStorage.getItem('removedExtensions');
+    return savedRemovedExtensions ? JSON.parse(savedRemovedExtensions) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('extensions', JSON.stringify(extensions));
+  }, [extensions]);
+  
+  useEffect(() => {
+    localStorage.setItem('removedExtensions', JSON.stringify(removedExtensions));
+  }, [removedExtensions]);
 
   const handleToggle = (id: string, active: boolean) => {
     setExtensions(
@@ -272,10 +293,8 @@ const Index = () => {
   const handleRemove = (id: string) => {
     const extension = extensions.find((ext) => ext.id === id);
     if (extension) {
-      // Add to removed extensions history
       setRemovedExtensions([...removedExtensions, extension]);
       
-      // Remove from active extensions
       setExtensions(extensions.filter((ext) => ext.id !== id));
       
       toast({
@@ -288,10 +307,8 @@ const Index = () => {
   const handleRestore = (id: string) => {
     const extension = removedExtensions.find((ext) => ext.id === id);
     if (extension) {
-      // Add back to active extensions
       setExtensions([...extensions, extension]);
       
-      // Remove from removed extensions history
       setRemovedExtensions(removedExtensions.filter((ext) => ext.id !== id));
       
       toast({
@@ -306,6 +323,34 @@ const Index = () => {
     if (extension) {
       setSelectedExtension(extension);
     }
+  };
+
+  const handleEditExtension = (id: string) => {
+    const extension = extensions.find((ext) => ext.id === id);
+    if (extension) {
+      setEditingExtension({...extension});
+    }
+  };
+
+  const handleUpdateExtension = (updatedExtension: Extension) => {
+    const extensionWithTimestamp = {
+      ...updatedExtension,
+      updatedAt: new Date().toISOString(),
+      lastUpdated: "Just now"
+    };
+
+    setExtensions(
+      extensions.map((ext) =>
+        ext.id === updatedExtension.id ? extensionWithTimestamp : ext
+      )
+    );
+    
+    setEditingExtension(null);
+    
+    toast({
+      title: `${updatedExtension.name} updated`,
+      description: "The extension has been successfully updated.",
+    });
   };
 
   return (
@@ -362,6 +407,7 @@ const Index = () => {
               onToggle={handleToggle} 
               onRemove={handleRemove}
               onShowDetails={handleShowDetails}
+              onEdit={handleEditExtension}
             />
           </div>
           
@@ -435,7 +481,6 @@ const Index = () => {
         </div>
       </div>
       
-      {/* Extension Details Sheet */}
       <Sheet open={!!selectedExtension} onOpenChange={(open) => !open && setSelectedExtension(null)}>
         <SheetContent className="sm:max-w-md">
           <SheetHeader>
@@ -449,12 +494,23 @@ const Index = () => {
             <div className="py-6">
               <div className="flex items-start gap-3 mb-6">
                 <ExtensionIcon icon={selectedExtension.icon} color={selectedExtension.iconColor} size={28} />
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-medium text-slate-800 dark:text-white">{selectedExtension.name}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     {selectedExtension.description}
                   </p>
                 </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => {
+                    setSelectedExtension(null);
+                    handleEditExtension(selectedExtension.id);
+                  }}
+                >
+                  <Pencil size={16} className="mr-1" />
+                  Edit
+                </Button>
               </div>
               
               <div className="space-y-4">
@@ -481,6 +537,14 @@ const Index = () => {
                       <span className="text-slate-500 dark:text-slate-400">Last Updated</span>
                       <span className="text-slate-800 dark:text-white">{selectedExtension.lastUpdated}</span>
                     </div>
+                    {selectedExtension.updatedAt && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-500 dark:text-slate-400">Last Modified</span>
+                        <span className="text-slate-800 dark:text-white">
+                          {new Date(selectedExtension.updatedAt).toLocaleString()}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -525,6 +589,118 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!editingExtension} onOpenChange={(open) => !open && setEditingExtension(null)}>
+        <SheetContent className="sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Edit Extension</SheetTitle>
+            <SheetDescription>
+              Update extension information
+            </SheetDescription>
+          </SheetHeader>
+          
+          {editingExtension && (
+            <div className="py-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateExtension(editingExtension);
+              }}>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      value={editingExtension.name}
+                      onChange={(e) => setEditingExtension({...editingExtension, name: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={editingExtension.description}
+                      onChange={(e) => setEditingExtension({...editingExtension, description: e.target.value})}
+                      className="mt-1"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="version">Version</Label>
+                    <Input
+                      id="version"
+                      value={editingExtension.version || ""}
+                      onChange={(e) => setEditingExtension({...editingExtension, version: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Input
+                      id="category"
+                      value={editingExtension.category || ""}
+                      onChange={(e) => setEditingExtension({...editingExtension, category: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="website">Website URL</Label>
+                    <Input
+                      id="website"
+                      value={editingExtension.website || ""}
+                      onChange={(e) => setEditingExtension({...editingExtension, website: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="author">Author</Label>
+                    <Input
+                      id="author"
+                      value={editingExtension.author || ""}
+                      onChange={(e) => setEditingExtension({...editingExtension, author: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="iconColor">Icon Color</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        id="iconColor"
+                        type="color"
+                        value={editingExtension.iconColor}
+                        onChange={(e) => setEditingExtension({...editingExtension, iconColor: e.target.value})}
+                        className="w-16 h-10 p-1"
+                      />
+                      <Input
+                        value={editingExtension.iconColor}
+                        onChange={(e) => setEditingExtension({...editingExtension, iconColor: e.target.value})}
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 space-x-2 flex justify-end">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setEditingExtension(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit">Save Changes</Button>
+                  </div>
+                </div>
+              </form>
             </div>
           )}
         </SheetContent>
