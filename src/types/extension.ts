@@ -8,4 +8,13 @@ export interface Extension {
   icon: LucideIcon;
   iconColor: string;
   isActive: boolean;
+  category?: string;
+  version?: string;
+  lastUpdated?: string;
+  author?: string;
+  website?: string;
+  tags?: string[];
+  permissions?: string[];
+  size?: string;
+  rating?: number;
 }
