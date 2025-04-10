@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Code, 
@@ -13,13 +12,17 @@ import {
   Droplets, 
   Link2, 
   FileCode, 
-  Terminal 
+  Terminal,
+  Sun,
+  Moon
 } from "lucide-react";
 import { Extension } from "@/types/extension";
 import ExtensionsList from "@/components/ExtensionsList";
 import { toast } from "@/hooks/use-toast";
+import { useTheme } from "@/providers/ThemeProvider";
 
 const Index = () => {
+  const { theme, toggleTheme } = useTheme();
   const [extensions, setExtensions] = useState<Extension[]>([
     {
       id: "1",
@@ -149,7 +152,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darker">
+    <div className="min-h-screen bg-lighter dark:bg-darker transition-colors duration-300">
       <div className="container py-6 px-4">
         <header className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -163,24 +166,18 @@ const Index = () => {
                 </svg>
               </div>
             </div>
-            <h1 className="text-white text-xl font-semibold">Extensions</h1>
+            <h1 className="text-slate-800 dark:text-white text-xl font-semibold">Extensions</h1>
           </div>
-          <button className="w-7 h-7 text-slate-300 rounded-full hover:bg-slate-800 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <circle cx="12" cy="12" r="4"></circle>
-              <path d="M12 2v2"></path>
-              <path d="M12 20v2"></path>
-              <path d="M5 5l1.5 1.5"></path>
-              <path d="M17.5 17.5 19 19"></path>
-              <path d="M2 12h2"></path>
-              <path d="M20 12h2"></path>
-              <path d="M5 19l1.5-1.5"></path>
-              <path d="M17.5 6.5 19 5"></path>
-            </svg>
+          <button 
+            className="w-7 h-7 text-slate-800 dark:text-slate-300 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center transition-colors duration-300"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </header>
 
-        <h2 className="text-2xl font-bold text-white mt-8 mb-2">Extensions List</h2>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-8 mb-2">Extensions List</h2>
         
         <ExtensionsList 
           extensions={extensions} 

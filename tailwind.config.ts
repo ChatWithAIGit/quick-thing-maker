@@ -74,7 +74,9 @@ export default {
 			},
 			backgroundColor: {
 				"dark-card": "#1a1f2c",
+				"light-card": "#f5f7fa",
 				"darker": "#0f1118",
+				"lighter": "#ffffff",
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
