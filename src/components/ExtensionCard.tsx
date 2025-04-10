@@ -25,7 +25,7 @@ const ExtensionCard = ({
   onRemove,
 }: ExtensionCardProps) => {
   return (
-    <div className="card-container rounded-lg p-4 flex flex-col gap-3 transition-colors duration-300">
+    <div className="card-container rounded-lg p-4 flex flex-col gap-3 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900">
       <div className="flex items-start gap-3">
         <ExtensionIcon icon={icon} color={iconColor} />
         <div className="flex-1">

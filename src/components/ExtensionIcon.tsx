@@ -1,21 +1,20 @@
 
 import React from "react";
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ExtensionIconProps {
   icon: LucideIcon;
   color: string;
-  className?: string;
+  size?: number;
 }
 
-const ExtensionIcon = ({ icon: Icon, color, className }: ExtensionIconProps) => {
+const ExtensionIcon = ({ icon: Icon, color, size = 20 }: ExtensionIconProps) => {
   return (
     <div
-      className={cn("extension-icon", className)}
-      style={{ backgroundColor: color }}
+      className="rounded-md flex items-center justify-center p-1"
+      style={{ backgroundColor: `${color}20` }}
     >
-      <Icon size={20} />
+      <Icon size={size} color={color} />
     </div>
   );
 };

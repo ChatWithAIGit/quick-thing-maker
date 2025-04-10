@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Code, 
@@ -14,12 +15,14 @@ import {
   FileCode, 
   Terminal,
   Sun,
-  Moon
+  Moon,
+  History
 } from "lucide-react";
 import { Extension } from "@/types/extension";
 import ExtensionsList from "@/components/ExtensionsList";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "@/providers/ThemeProvider";
+import RemovedExtensionsList from "@/components/RemovedExtensionsList";
 
 const Index = () => {
   const { theme, toggleTheme } = useTheme();
@@ -121,6 +124,8 @@ const Index = () => {
       isActive: true,
     },
   ]);
+  
+  const [removedExtensions, setRemovedExtensions] = useState<Extension[]>([]);
 
   const handleToggle = (id: string, active: boolean) => {
     setExtensions(
@@ -143,17 +148,38 @@ const Index = () => {
   const handleRemove = (id: string) => {
     const extension = extensions.find((ext) => ext.id === id);
     if (extension) {
+      // Add to removed extensions history
+      setRemovedExtensions([...removedExtensions, extension]);
+      
+      // Remove from active extensions
       setExtensions(extensions.filter((ext) => ext.id !== id));
+      
       toast({
         title: `${extension.name} removed`,
-        description: "The extension has been removed from your browser.",
+        description: "The extension has been moved to your removal history.",
+      });
+    }
+  };
+
+  const handleRestore = (id: string) => {
+    const extension = removedExtensions.find((ext) => ext.id === id);
+    if (extension) {
+      // Add back to active extensions
+      setExtensions([...extensions, extension]);
+      
+      // Remove from removed extensions history
+      setRemovedExtensions(removedExtensions.filter((ext) => ext.id !== id));
+      
+      toast({
+        title: `${extension.name} restored`,
+        description: "The extension has been added back to your active list.",
       });
     }
   };
 
   return (
     <div className="min-h-screen bg-lighter dark:bg-darker transition-colors duration-300">
-      <div className="container py-6 px-4">
+      <div className="container py-6 px-4 mx-auto max-w-7xl">
         <header className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-red-500 rounded-md flex items-center justify-center">
@@ -177,13 +203,27 @@ const Index = () => {
           </button>
         </header>
 
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-8 mb-2">Extensions List</h2>
-        
-        <ExtensionsList 
-          extensions={extensions} 
-          onToggle={handleToggle} 
-          onRemove={handleRemove} 
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-4 mb-2">Extensions List</h2>
+            <ExtensionsList 
+              extensions={extensions} 
+              onToggle={handleToggle} 
+              onRemove={handleRemove} 
+            />
+          </div>
+          
+          <div className="lg:col-span-1">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-4 mb-2 flex items-center gap-2">
+              <History size={20} />
+              Removal History
+            </h2>
+            <RemovedExtensionsList 
+              removedExtensions={removedExtensions} 
+              onRestore={handleRestore} 
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -23,22 +23,28 @@ const ExtensionsList = ({ extensions, onToggle, onRemove }: ExtensionsListProps)
   });
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full">
       <FilterTabs activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
       
-      <div className="space-y-3 mt-6">
-        {filteredExtensions.map((extension) => (
-          <ExtensionCard
-            key={extension.id}
-            name={extension.name}
-            description={extension.description}
-            icon={extension.icon}
-            iconColor={extension.iconColor}
-            isActive={extension.isActive}
-            onToggle={(active) => onToggle(extension.id, active)}
-            onRemove={() => onRemove(extension.id)}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+        {filteredExtensions.length > 0 ? (
+          filteredExtensions.map((extension) => (
+            <ExtensionCard
+              key={extension.id}
+              name={extension.name}
+              description={extension.description}
+              icon={extension.icon}
+              iconColor={extension.iconColor}
+              isActive={extension.isActive}
+              onToggle={(active) => onToggle(extension.id, active)}
+              onRemove={() => onRemove(extension.id)}
+            />
+          ))
+        ) : (
+          <div className="col-span-full py-8 text-center text-slate-500 dark:text-slate-400">
+            No extensions found matching your filter
+          </div>
+        )}
       </div>
     </div>
   );
