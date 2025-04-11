@@ -24,8 +24,8 @@ const ExtensionIcon = ({
       )}
       style={{ backgroundColor: `${color}20` }}
     >
-      {/* Make sure Icon is properly rendered as a React component */}
-      <Icon size={size} color={color} strokeWidth={2} />
+      {/* Make sure Icon is properly rendered with properly named variable */}
+      {React.createElement(Icon, { size, color, strokeWidth: 2 })}
     </div>
   );
 };
