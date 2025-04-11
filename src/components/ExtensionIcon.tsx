@@ -1,20 +1,21 @@
+
 import React from "react";
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils"; // asigură-te că acest `cn` există sau înlocuiește-l cu clsx
+import { cn } from "@/lib/utils";
 
 interface ExtensionIconProps {
   icon: LucideIcon;
-  color: string; // ex: "#FC440F" sau "red"
+  color: string;
   size?: number;
   className?: string;
 }
 
-const ExtensionIcon: React.FC<ExtensionIconProps> = ({
+const ExtensionIcon = ({
   icon: Icon,
   color,
   size = 20,
   className,
-}) => {
+}: ExtensionIconProps) => {
   if (!Icon) return null;
 
   return (
@@ -24,7 +25,7 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
         className
       )}
       style={{
-        backgroundColor: `${color}20`, // adaugă transparență, gen: #FC440F20
+        backgroundColor: `${color}20`,
       }}
     >
       <Icon size={size} color={color} strokeWidth={2} />
