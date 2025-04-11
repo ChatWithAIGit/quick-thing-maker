@@ -16,8 +16,9 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
   size = 20,
   className,
 }) => {
+  // Early return if no icon is provided
   if (!Icon) return null;
-
+  
   return (
     <div
       className={cn(
@@ -28,7 +29,7 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
         backgroundColor: `${color}20`, // adds transparency, e.g., #FC440F20
       }}
     >
-      <Icon size={size} color={color} strokeWidth={2} />
+      {React.createElement(Icon, { size, color, strokeWidth: 2 })}
     </div>
   );
 };
