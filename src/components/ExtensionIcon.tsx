@@ -1,11 +1,11 @@
 
 import React from "react";
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; // asigură-te că acest `cn` există sau înlocuiește-l cu clsx
 
 interface ExtensionIconProps {
   icon: LucideIcon;
-  color: string;
+  color: string; // ex: "#FC440F" sau "red"
   size?: number;
   className?: string;
 }
@@ -16,9 +16,8 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
   size = 20,
   className,
 }) => {
-  // Early return if no icon is provided
   if (!Icon) return null;
-  
+
   return (
     <div
       className={cn(
@@ -26,7 +25,7 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
         className
       )}
       style={{
-        backgroundColor: `${color}20`, // adds transparency, e.g., #FC440F20
+        backgroundColor: `${color}20`, // adaugă transparență, gen: #FC440F20
       }}
     >
       <Icon size={size} color={color} strokeWidth={2} />
