@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   Code, 
@@ -24,7 +25,8 @@ import {
   Download,
   Clock,
   ExternalLink,
-  Pencil
+  Pencil,
+  AlertCircle
 } from "lucide-react";
 import { Extension } from "@/types/extension";
 import ExtensionsList from "@/components/ExtensionsList";
@@ -32,6 +34,7 @@ import { toast } from "@/hooks/use-toast";
 import { useTheme } from "@/providers/ThemeProvider";
 import RemovedExtensionsList from "@/components/RemovedExtensionsList";
 import ExtensionIcon from "@/components/ExtensionIcon";
+import IconDebugger from "@/components/IconDebugger";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +44,34 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown } from "lucide-react";
+
+// Add a debug section at the top of the page
+const IconDebugSection = () => {
+  return (
+    <div className="mb-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Icon Debugging</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <IconDebugger icon={Code} />
+        <IconDebugger icon={Palette} />
+        <IconDebugger icon={Layout} />
+        <IconDebugger icon={AlertCircle} />
+      </div>
+      <div className="mt-4">
+        <h3 className="font-medium mb-2">Direct Icon Test:</h3>
+        <div className="flex gap-4">
+          <div>
+            <Code size={24} color="#ff0000" />
+            <span className="text-sm">Direct Code</span>
+          </div>
+          <div>
+            <ExtensionIcon icon={Code} color="#ff0000" size={24} />
+            <span className="text-sm">ExtensionIcon with Code</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const defaultExtensions: Extension[] = [
   {
@@ -253,6 +284,7 @@ const Index = () => {
   const { theme, toggleTheme } = useTheme();
   const [selectedExtension, setSelectedExtension] = useState<Extension | null>(null);
   const [editingExtension, setEditingExtension] = useState<Extension | null>(null);
+  const [showDebug, setShowDebug] = useState(true);
   
   const [extensions, setExtensions] = useState<Extension[]>(() => {
     const savedExtensions = localStorage.getItem('extensions');
@@ -271,6 +303,13 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem('removedExtensions', JSON.stringify(removedExtensions));
   }, [removedExtensions]);
+
+  // Log icon types for debugging
+  useEffect(() => {
+    console.log("Code icon type:", typeof Code);
+    console.log("Layout icon type:", typeof Layout);
+    console.log("First extension icon type:", typeof extensions[0]?.icon);
+  }, [extensions]);
 
   const handleToggle = (id: string, active: boolean) => {
     setExtensions(
@@ -397,6 +436,17 @@ const Index = () => {
             </button>
           </div>
         </header>
+
+        {showDebug && <IconDebugSection />}
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setShowDebug(!showDebug)}
+          className="mb-4"
+        >
+          {showDebug ? "Hide Debug" : "Show Debug"}
+        </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">

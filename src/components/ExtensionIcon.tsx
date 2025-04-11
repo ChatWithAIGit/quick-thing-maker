@@ -29,7 +29,7 @@ const ExtensionIcon: React.FC<ExtensionIconProps> = ({
         backgroundColor: `${color}20`, // adds transparency, e.g., #FC440F20
       }}
     >
-      {React.createElement(Icon, { size, color, strokeWidth: 2 })}
+      <Icon size={size} color={color} strokeWidth={2} />
     </div>
   );
 };
