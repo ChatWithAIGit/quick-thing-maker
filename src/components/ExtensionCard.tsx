@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ExtensionIcon from "./ExtensionIcon";
-import { LucideIcon, Info, ExternalLink } from "lucide-react";
+import { LucideIcon, Info, ExternalLink, Pencil } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ExtensionCardProps {
@@ -21,6 +21,7 @@ interface ExtensionCardProps {
   author?: string;
   website?: string;
   showDetails?: () => void;
+  onEdit?: () => void; // Add the onEdit prop to the interface
 }
 
 const ExtensionCard = ({
@@ -37,6 +38,7 @@ const ExtensionCard = ({
   author = "Developer",
   website,
   showDetails,
+  onEdit, // Add onEdit to the function parameters
 }: ExtensionCardProps) => {
   return (
     <div className="card-container rounded-lg p-5 flex flex-col gap-4 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 bg-white dark:bg-slate-900">
@@ -92,22 +94,36 @@ const ExtensionCard = ({
             </Button>
           )}
           
+          {onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-slate-800"
+              onClick={onEdit}
+            >
+              <Pencil size={14} className="mr-1" />
+              Edit
+            </Button>
+          )}
+          
           {website && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-slate-800"
-                  onClick={() => window.open(website, '_blank')}
-                >
-                  <ExternalLink size={14} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Visit website</p>
-              </TooltipContent>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-slate-800"
+                    onClick={() => window.open(website, '_blank')}
+                  >
+                    <ExternalLink size={14} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Visit website</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
         
