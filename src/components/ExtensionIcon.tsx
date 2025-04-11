@@ -24,7 +24,7 @@ const ExtensionIcon = ({
       )}
       style={{ backgroundColor: `${color}20` }}
     >
-      <Icon size={size} color={color} strokeWidth={2} />
+      {Icon && React.createElement(Icon, { size, color, strokeWidth: 2 })}
     </div>
   );
 };
